@@ -1,0 +1,20 @@
+! example input file run on Arseniev's gramicidin structure
+! note everything preceded by a "!" is a comment and will be ignored by HOLE
+!
+! follow instructions in doc/index.html to run this job
+!
+! first cards which must be included for HOLE to work
+! note that HOLE input is case insensitive (except file names)
+coord pdbname.pdb           ! Co-ordinates in pdb format
+radius ~/hole2/rad/simple.rad   ! Use simple AMBER vdw radii
+                                ! n.b. can use ~ in hole
+!
+! now optional cards
+sphpdb pdbname.sph             ! pdb format output of hole sphere centre info
+                                        ! (for use in sph_process program)
+cvect 0.0 0.0 1.0
+!cpoint -0.7145369648933411 -0.6006740927696228 4.780886173248291
+
+endrad 7.                       ! This is the pore radius that is taken
+                                ! as where channel ends. 5.0 Angstroms is good
+                                ! for a narrow channel

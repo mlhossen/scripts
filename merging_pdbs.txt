@@ -1,0 +1,4 @@
+find . -type f -name '*.txt' -exec cat {} + >> output.file
+
+#run this code to merge any txt, tcl or pdb files. ('*.txt') in a single 
+#output file (output.file).

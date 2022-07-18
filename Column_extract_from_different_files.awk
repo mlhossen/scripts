@@ -1,0 +1,1 @@
+paste <(awk '{print $1, $2}' in_out_np_2.4_5.7_60_0.0001.pmf ) <(awk '{print $1, $2}' in_out_p_2.1_6.5_60_0.0001.pmf ) <(awk '{print $1, $2}' out_in_np_1.4_6.8_60_0.0001.pmf) <(awk '{print $1, $2}' out_in_p_1.7_7.3_60_0.0001.pmf) > combined_all.dat

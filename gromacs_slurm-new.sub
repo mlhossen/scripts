@@ -1,0 +1,60 @@
+#!/bin/bash
+#SBATCH --qos=pq_chapagap
+#SBATCH --account=iacc_chapagap
+#SBATCH --partition GPU_chapagap
+
+# Number of nodes
+#SBATCH -N 1
+
+# Number of tasks
+#SBATCH -n 7
+#SBATCH --mem 128890 
+# Number of GPUs per node
+#SBATCH --gres=gpu:2
+
+# Specify server to run this job on
+#SBATCH -w g006
+
+#SBATCH --output=logfile
+
+##########################################################
+# Setup envrionmental variable. 
+##########################################################
+export OMP_NUM_THREADS=$SLURM_CPUS_ON_NODE
+. /home/share/Modules/4.1.3/init/profile.sh
+module load /home/share/Modules/4.1.3/modulefiles/linux-centos7-x86_64/gromacs-2020.4-gcc-8.2.0-vrhudaf
+
+pwd; hostname; date
+ 
+echo "Running program on $SLURM_CPUS_ON_NODE CPU cores"
+
+##########################################################
+##########################################################
+
+#mpirun -np 2 gmx_mpi grompp -f step4.0_minimization.mdp -o step4.0_minimization.tpr -c step3_input.gro -r step3_input.gro -p topol.top -maxwarn 1 -ntomp 7
+#date
+#mpirun -np 2 gmx_mpi mdrun -v -deffnm step4.0_minimization -ntomp 7
+#date
+#mpirun -np 2 gmx_mpi grompp -f  tep4.1_equilibration.mdp -o step4.1_equilibration.tpr -c step4.0_minimization.gro -r step3_input.gro -p topol.top -maxwarn 1 -ntomp 7
+#date
+#mpirun -np 2 gmx_mpi mdrun -v -deffnm step4.1_equilibration -ntomp 7
+#date
+
+set cnt    = 1
+set cntmax = 10
+
+while ( ${cnt} <= ${cntmax} )
+        if ( ${cnt} == 1 ) then
+                mpirun -np 2 gmx_mpi grompp -f step5_production.mdp -o step5_${cnt}.tpr -c step4.1_equilibration.gro -p topol.top -ntomp 7
+                date
+		mpirun -np 2 gmx_mpi mdrun -v -deffnm step5_${cnt} -ntomp 7
+        	date
+	else
+                @ pcnt = ${cnt} - 1
+                mpirun -np 2 gmx_mpi grompp -f step5_production.mdp -o step5_${cnt}.tpr -c step5_${pcnt}.gro -t step5_${pcnt}.cpt -p topol.top -ntomp 7
+                date
+		mpirun -np 2 gmx_mpi mdrun -v -deffnm step5_${cnt} -ntomp 7
+		date
+        endif
+        @ cnt += 1
+end

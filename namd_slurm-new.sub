@@ -1,0 +1,38 @@
+#!/bin/bash
+#SBATCH --qos=pq_chapagap
+#SBATCH --account=iacc_chapagap
+#SBATCH --partition GPU_chapagap
+
+# Number of nodes
+#SBATCH -N 1
+
+# Number of tasks
+#SBATCH -n 16
+#SBATCH --mem 128890 
+# Number of GPUs per node
+#SBATCH --gres=gpu:2
+
+# Specify server to run this job on
+#SBATCH -w g006
+
+#SBATCH --output=logfile
+
+##########################################################
+# Setup envrionmental variable. 
+##########################################################
+export OMP_NUM_THREADS=$SLURM_CPUS_ON_NODE
+. /home/share/Modules/4.1.3/init/profile.sh
+module load /home/share/Modules/4.1.3/modulefiles/linux-centos7-x86_64/namd-2.13-cuda-infiniband
+
+pwd; hostname; date
+ 
+echo "Running program on $SLURM_CPUS_ON_NODE CPU cores"
+
+##########################################################
+##########################################################
+
+charmrun  ++ppn $OMP_NUM_THREADS ++p $OMP_NUM_THREADS `which namd2` +idlepoll +ignoresharing  md_0-100ns.inp > md_0-100ns.log
+
+date
+
+
